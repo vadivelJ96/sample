@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: sample
+
+  threads:
+    virtual:
+      enabled: true
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/sample?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: ROOT
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+server:
+  port: 8082

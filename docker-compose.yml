@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: sample-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ROOT
+      MYSQL_DATABASE: sample
+    ports:
+      - "3306:3306"
+    volumes:
+      - sample_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pROOT"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sample-app
+    restart: on-failure
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/sample?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ROOT
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SERVER_PORT: 8082
+
+volumes:
+  sample_mysql_data:
+
